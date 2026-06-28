@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moriarty — Présentation PSE</title>
+  <meta name="description" content="Présentation du projet de création d'entreprise Moriarty pour commission PSE." />
+
+  <style>
+    :root {
+      --bg: #060812;
+      --bg-soft: #0b1020;
+      --text: #f5f7ff;
+      --muted: rgba(245, 247, 255, 0.68);
+      --muted-2: rgba(245, 247, 255, 0.45);
+      --line: rgba(255, 255, 255, 0.12);
+      --card: rgba(255, 255, 255, 0.065);
+      --card-strong: rgba(255, 255, 255, 0.11);
+      --accent: #8ed8ff;
+      --accent-2: #a889ff;
+      --accent-3: #55f0c5;
+      --danger: #ff6b9a;
+      --radius-xl: 32px;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+      --font-main: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-main);
+      overflow-x: hidden;
+      scroll-snap-type: y mandatory;
+    }
+
+    body.presentation-mode {
+      cursor: none;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -4;
+      background:
+        radial-gradient(circle at 16% 20%, rgba(69, 155, 255, 0.28), transparent 28%),
+        radial-gradient(circle at 80% 20%, rgba(153, 102, 255, 0.18), transparent 30%),
+        radial-gradient(circle at 70% 86%, rgba(65, 232, 187, 0.16), transparent 30%),
+        linear-gradient(145deg, #050713 0%, #0b1022 48%, #03040a 100%);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      opacity: 0.25;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at center, black, transparent 78%);
+      pointer-events: none;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    canvas#particleCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.08;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.9'/%3E%3C/svg%3E");
+    }
+
+    .topbar {
+      position: fixed;
+      top: 24px;
+      left: 28px;
+      right: 28px;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      pointer-events: none;
+    }
+
+    .brand-mini,
+    .top-actions {
+      pointer-events: auto;
+    }
+
+    .brand-mini {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgba(255, 255, 255, 0.88);
+      letter-spacing: 0.04em;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background:
+        linear-gradient(135deg, rgba(142, 216, 255, 0.18), rgba(168, 137, 255, 0.13)),
+        rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 0 24px rgba(142, 216, 255, 0.16);
+      font-weight: 800;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pill-button {
+      height: 42px;
+      padding: 0 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: rgba(255, 255, 255, 0.88);
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(18px);
+      cursor: pointer;
+      transition: transform .25s ease, background .25s ease, border-color .25s ease;
+      font-size: 13px;
+    }
+
+    .pill-button:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(142, 216, 255, 0.45);
+    }
+
+    .progress-wrap {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 3px;
+      z-index: 60;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .progress {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+      box-shadow: 0 0 24px rgba(142, 216, 255, 0.55);
+    }
+
+    .side-nav {
+      position: fixed;
+      right: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 50;
+      display: grid;
+      gap: 12px;
+    }
+
+    .side-nav button {
+      position: relative;
+      width: 12px;
+      height: 12px;
+      border: 0;
+      border-radius: 999px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.22);
+      transition: transform .25s ease, background .25s ease, box-shadow .25s ease;
+    }
+
+    .side-nav button::before {
+      content: attr(aria-label);
+      position: absolute;
+      right: 22px;
+      top: 50%;
+      transform: translateY(-50%) translateX(8px);
+      opacity: 0;
+      white-space: nowrap;
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.84);
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      pointer-events: none;
+      font-size: 12px;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+
+    .side-nav button:hover::before {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+
+    .side-nav button.active {
+      transform: scale(1.45);
+      background: var(--accent);
+      box-shadow: 0 0 24px rgba(142, 216, 255, 0.75);
+    }
+
+    .section {
+      min-height: 100vh;
+      width: 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: grid;
+      align-items: center;
+      position: relative;
+      padding: 110px 8vw 76px;
+      overflow: hidden;
+    }
+
+    .section::before {
+      content: "";
+      position: absolute;
+      inset: 8%;
+      z-index: -1;
+      opacity: 0.58;
+      background:
+        radial-gradient(circle at var(--spot-x, 50%) var(--spot-y, 50%), rgba(142, 216, 255, 0.12), transparent 32%),
+        radial-gradient(circle at calc(100% - var(--spot-x, 50%)) calc(100% - var(--spot-y, 50%)), rgba(168, 137, 255, 0.10), transparent 35%);
+      filter: blur(12px);
+      pointer-events: none;
+    }
+
+    .section-inner {
+      width: min(1220px, 100%);
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      color: rgba(142, 216, 255, 0.88);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .kicker::before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: currentColor;
+      box-shadow: 0 0 16px currentColor;
+    }
+
+    h1, h2, h3, p {
+      margin: 0;
+    }
+
+    h1 {
+      max-width: 1120px;
+      font-size: clamp(58px, 10vw, 148px);
+      line-height: 0.88;
+      letter-spacing: -0.08em;
+      font-weight: 900;
+    }
+
+    h2 {
+      max-width: 1040px;
+      font-size: clamp(38px, 5.4vw, 82px);
+      line-height: 0.94;
+      letter-spacing: -0.06em;
+      font-weight: 850;
+    }
+
+    h3 {
+      font-size: clamp(20px, 2vw, 30px);
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+    }
+
+    .lead {
+      max-width: 860px;
+      margin-top: 26px;
+      color: var(--muted);
+      font-size: clamp(18px, 1.7vw, 25px);
+      line-height: 1.55;
+      letter-spacing: -0.015em;
+    }
+
+    .text {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .gradient-text {
+      background: linear-gradient(120deg, #fff 12%, var(--accent) 38%, var(--accent-2) 70%, #fff 92%);
+      background-size: 220% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shine 7s ease-in-out infinite;
+    }
+
+    @keyframes shine {
+      0%, 100% { background-position: 0% center; }
+      50% { background-position: 100% center; }
+    }
+
+    .hero-layout {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 54px;
+      align-items: center;
+    }
+
+    .hero-card {
+      position: relative;
+      min-height: 520px;
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.035)),
+        radial-gradient(circle at 40% 20%, rgba(142, 216, 255, 0.20), transparent 30%),
+        radial-gradient(circle at 80% 80%, rgba(168, 137, 255, 0.20), transparent 32%);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transform-style: preserve-3d;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: linear-gradient(145deg, transparent, black 40%, transparent 100%);
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(0.5px);
+      opacity: 0.92;
+    }
+
+    .orb.one {
+      width: 220px;
+      height: 220px;
+      left: 50px;
+      top: 80px;
+      background: radial-gradient(circle at 30% 30%, #fff, var(--accent) 28%, rgba(142, 216, 255, 0.05) 70%);
+      box-shadow: 0 0 80px rgba(142, 216, 255, 0.35);
+      animation: floatA 8s ease-in-out infinite;
+    }
+
+    .orb.two {
+      width: 150px;
+      height: 150px;
+      right: 80px;
+      bottom: 80px;
+      background: radial-gradient(circle at 30% 30%, #fff, var(--accent-2) 28%, rgba(168, 137, 255, 0.05) 72%);
+      box-shadow: 0 0 80px rgba(168, 137, 255, 0.32);
+      animation: floatB 10s ease-in-out infinite;
+    }
+
+    @keyframes floatA {
+      0%, 100% { transform: translate3d(0, 0, 60px); }
+      50% { transform: translate3d(24px, 34px, 80px); }
+    }
+
+    @keyframes floatB {
+      0%, 100% { transform: translate3d(0, 0, 70px); }
+      50% { transform: translate3d(-30px, -24px, 95px); }
+    }
+
+    .terminal {
+      position: absolute;
+      left: 36px;
+      right: 36px;
+      bottom: 36px;
+      padding: 24px;
+      border-radius: 22px;
+      background: rgba(3, 7, 18, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 26px 80px rgba(0, 0, 0, 0.35);
+      transform: translateZ(90px);
+      font-family: var(--font-mono);
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .terminal .line {
+      display: block;
+    }
+
+    .terminal .ok {
+      color: var(--accent-3);
+    }
+
+    .terminal .accent {
+      color: var(--accent);
+    }
+
+    .terminal .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 16px;
+      vertical-align: -3px;
+      background: var(--accent);
+      animation: blink 1s steps(2) infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 36px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      background: rgba(255, 255, 255, 0.055);
+      backdrop-filter: blur(16px);
+      font-size: 13px;
+    }
+
+    .tag::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent-3);
+      box-shadow: 0 0 12px currentColor;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 42px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 42px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+      margin-top: 42px;
+    }
+
+    .card {
+      position: relative;
+      padding: 26px;
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.095), rgba(255, 255, 255, 0.038)),
+        var(--card);
+      border: 1px solid var(--line);
+      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.24);
+      backdrop-filter: blur(20px);
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition: transform .25s ease, border-color .25s ease, background .25s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(142, 216, 255, 0.35);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.052)),
+        var(--card);
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(142, 216, 255, 0.18), transparent 34%);
+      opacity: 0;
+      transition: opacity .25s ease;
+      pointer-events: none;
+    }
+
+    .card:hover::after {
+      opacity: 1;
+    }
+
+    .card .num {
+      font-family: var(--font-mono);
+      color: rgba(142, 216, 255, 0.92);
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+
+    .card p {
+      margin-top: 14px;
+      color: var(--muted);
+      line-height: 1.62;
+      font-size: 15px;
+    }
+
+    .big-quote {
+      margin-top: 40px;
+      padding: 28px 32px;
+      border-left: 1px solid rgba(142, 216, 255, 0.64);
+      color: rgba(255, 255, 255, 0.88);
+      font-size: clamp(22px, 2.2vw, 34px);
+      line-height: 1.25;
+      letter-spacing: -0.035em;
+      background: linear-gradient(90deg, rgba(142, 216, 255, 0.07), transparent);
+      border-radius: 0 24px 24px 0;
+    }
+
+    .solution-panel {
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 34px;
+      align-items: center;
+      margin-top: 42px;
+    }
+
+    .interface-mock {
+      position: relative;
+      min-height: 500px;
+      border-radius: var(--radius-xl);
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .mock-top {
+      height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 22px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .mock-content {
+      padding: 28px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .mock-hero {
+      height: 142px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(142, 216, 255, 0.36), transparent 34%),
+        linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.04));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .mock-row {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+    }
+
+    .mock-box {
+      min-height: 126px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mock-box::before,
+    .mock-box::after {
+      content: "";
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      height: 10px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .mock-box::before { top: 26px; width: 55%; }
+    .mock-box::after { top: 48px; width: 78%; }
+
+    .module-ring {
+      position: absolute;
+      inset: 50%;
+      width: 360px;
+      height: 360px;
+      margin: -180px;
+      border: 1px solid rgba(142, 216, 255, 0.18);
+      border-radius: 999px;
+      animation: rotate 34s linear infinite;
+      pointer-events: none;
+    }
+
+    .module-ring::before,
+    .module-ring::after {
+      content: "";
+      position: absolute;
+      width: 13px;
+      height: 13px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 24px var(--accent);
+    }
+
+    .module-ring::before { left: 40px; top: 48px; }
+    .module-ring::after { right: 16px; bottom: 98px; background: var(--accent-2); }
+
+    @keyframes rotate {
+      to { transform: rotate(360deg); }
+    }
+
+    .tool-cloud {
+      margin-top: 42px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 13px;
+    }
+
+    .tool {
+      position: relative;
+      min-height: 54px;
+      padding: 0 20px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.065);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.84);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      overflow: hidden;
+    }
+
+    .tool::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.13), transparent);
+      transform: translateX(-100%);
+      animation: toolSweep 4.5s ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+    }
+
+    @keyframes toolSweep {
+      0%, 55%, 100% { transform: translateX(-100%); }
+      75% { transform: translateX(100%); }
+    }
+
+    .timeline {
+      position: relative;
+      margin-top: 50px;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      top: 24px;
+      left: 6%;
+      right: 6%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(142, 216, 255, 0.55), transparent);
+    }
+
+    .step {
+      position: relative;
+      padding-top: 58px;
+    }
+
+    .step::before {
+      content: attr(data-step);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: rgba(142, 216, 255, 0.12);
+      border: 1px solid rgba(142, 216, 255, 0.26);
+      color: rgba(255, 255, 255, 0.92);
+      font-family: var(--font-mono);
+      box-shadow: 0 0 28px rgba(142, 216, 255, 0.12);
+    }
+
+    .step h3 {
+      font-size: 20px;
+    }
+
+    .step p {
+      color: var(--muted);
+      line-height: 1.55;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .project-card {
+      min-height: 370px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        radial-gradient(circle at 20% 18%, rgba(142,216,255,.18), transparent 30%),
+        linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.04));
+    }
+
+    .project-card .project-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .project-card .project-badge {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 999px;
+      padding: 8px 11px;
+    }
+
+    .project-card h3 {
+      font-size: clamp(30px, 4vw, 54px);
+      margin-top: 28px;
+    }
+
+    .project-card p {
+      font-size: 17px;
+      max-width: 560px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 26px;
+    }
+
+    .chip {
+      padding: 8px 10px;
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.78);
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.105);
+      font-size: 12px;
+      font-family: var(--font-mono);
+    }
+
+    .business-flow {
+      margin-top: 42px;
+      padding: 30px;
+      border-radius: var(--radius-xl);
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .flow-item {
+      min-height: 130px;
+      padding: 22px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(255, 255, 255, 0.095);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flow-item:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(142, 216, 255, 0.88);
+      font-size: 28px;
+      z-index: 2;
+    }
+
+    .flow-item strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .flow-item span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .vision {
+      margin-top: 42px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .vision-card {
+      min-height: 300px;
+      padding: 26px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .vision-card .period {
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .vision-card h3 {
+      margin-top: 22px;
+      font-size: 24px;
+    }
+
+    .vision-card p {
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 14px;
+    }
+
+    .final-panel {
+      padding: clamp(34px, 6vw, 76px);
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 18% 20%, rgba(142, 216, 255, 0.20), transparent 28%),
+        radial-gradient(circle at 78% 84%, rgba(168, 137, 255, 0.17), transparent 28%),
+        rgba(255, 255, 255, 0.065);
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: var(--shadow);
+    }
+
+    .final-panel h2 {
+      max-width: 1000px;
+    }
+
+    .signature {
+      margin-top: 44px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.72);
+    }
+
+    .cta {
+      display: inline-flex;
+      min-height: 54px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 22px;
+      border-radius: 999px;
+      background: linear-gradient(120deg, rgba(142,216,255,.92), rgba(168,137,255,.92));
+      color: #050713;
+      font-weight: 800;
+      box-shadow: 0 18px 54px rgba(142,216,255,.22);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px) scale(0.985);
+      transition: opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1);
+    }
+
+    .section.active .reveal {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .section.active .reveal:nth-child(2) { transition-delay: .08s; }
+    .section.active .reveal:nth-child(3) { transition-delay: .16s; }
+    .section.active .reveal:nth-child(4) { transition-delay: .24s; }
+    .section.active .reveal:nth-child(5) { transition-delay: .32s; }
+
+    .split {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 44px;
+      align-items: center;
+    }
+
+    .stat-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .stat {
+      padding: 24px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: clamp(36px, 5vw, 72px);
+      letter-spacing: -0.06em;
+      line-height: .9;
+      background: linear-gradient(120deg, #fff, var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .hint {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 60;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,.52);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: opacity .25s ease;
+    }
+
+    .hint.hidden {
+      opacity: 0;
+    }
+
+    .mouse {
+      width: 20px;
+      height: 32px;
+      border: 1px solid rgba(255,255,255,.32);
+      border-radius: 999px;
+      position: relative;
+    }
+
+    .mouse::before {
+      content: "";
+      position: absolute;
+      width: 3px;
+      height: 7px;
+      border-radius: 999px;
+      left: 50%;
+      top: 7px;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,.48);
+      animation: wheel 1.5s ease-in-out infinite;
+    }
+
+    @keyframes wheel {
+      0% { opacity: 0; transform: translate(-50%, 0); }
+      35% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, 10px); }
+    }
+
+    @media (max-width: 1100px) {
+      .hero-layout,
+      .solution-panel,
+      .split {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .timeline {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .business-flow {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-item:not(:last-child)::after {
+        content: "↓";
+        right: 24px;
+        top: auto;
+        bottom: -19px;
+        transform: none;
+      }
+
+      .vision {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hero-card {
+        min-height: 430px;
+      }
+    }
+
+    @media (max-width: 740px) {
+      body {
+        scroll-snap-type: none;
+      }
+
+      .section {
+        min-height: auto;
+        padding: 96px 22px 72px;
+      }
+
+      .topbar {
+        top: 14px;
+        left: 14px;
+        right: 14px;
+      }
+
+      .brand-mini span:last-child {
+        display: none;
+      }
+
+      .side-nav {
+        display: none;
+      }
+
+      .grid-3,
+      .grid-4,
+      .grid-2,
+      .timeline,
+      .vision {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: clamp(54px, 16vw, 80px);
+      }
+
+      .hero-card {
+        min-height: 390px;
+      }
+
+      .terminal {
+        left: 18px;
+        right: 18px;
+        bottom: 18px;
+        font-size: 11px;
+      }
+
+      .orb.one {
+        width: 170px;
+        height: 170px;
+      }
+
+      .orb.two {
+        width: 120px;
+        height: 120px;
+      }
+
+      .mock-row {
+        grid-template-columns: 1fr;
+      }
+
+      .business-flow {
+        padding: 16px;
+      }
+
+      .hint {
+        display: none;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+        color: #111827;
+        scroll-snap-type: none;
+      }
+
+      canvas,
+      .noise,
+      .topbar,
+      .side-nav,
+      .progress-wrap,
+      .hint {
+        display: none !important;
+      }
+
+      .section {
+        min-height: auto;
+        page-break-after: always;
+        padding: 40px 30px;
+      }
+
+      .card,
+      .final-panel,
+      .hero-card,
+      .interface-mock,
+      .stat,
+      .vision-card,
+      .business-flow {
+        background: #fff;
+        color: #111827;
+        border: 1px solid #d1d5db;
+        box-shadow: none;
+      }
+
+      .text,
+      .lead,
+      .card p,
+      .stat span,
+      .vision-card p,
+      .flow-item span {
+        color: #374151;
+      }
+
+      .gradient-text {
+        color: #111827;
+        background: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="particleCanvas"></canvas>
+  <div class="noise"></div>
+
+  <div class="progress-wrap" aria-hidden="true">
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand-mini">
+      <div class="brand-mark">M</div>
+      <span>Moriarty · Dossier de création d’entreprise</span>
+    </div>
+    <div class="top-actions">
+      <button class="pill-button" id="presentationBtn">Mode présentation</button>
+      <button class="pill-button" onclick="window.print()">PDF</button>
+    </div>
+  </header>
+
+  <nav class="side-nav" id="sideNav" aria-label="Navigation de présentation"></nav>
+
+  <div class="hint" id="hint">
+    <span class="mouse"></span>
+    <span>Scroll / flèches clavier</span>
+  </div>
+
+  <main>
+    <section class="section" data-title="Intro">
+      <div class="section-inner hero-layout">
+        <div>
+          <div class="kicker reveal">Commission PSE · Projet de création</div>
+          <h1 class="reveal"><span class="gradient-text">Moriarty</span></h1>
+          <p class="lead reveal">
+            Sites web modernes, accessibles et pensés pour les petites entreprises :
+            vitrines, portfolios, réservations, e-commerce léger et applications web utiles.
+          </p>
+          <div class="hero-tags reveal">
+            <span class="tag">site vitrine</span>
+            <span class="tag">réservation</span>
+            <span class="tag">e-commerce</span>
+            <span class="tag">maintenance</span>
+            <span class="tag">petites entreprises</span>
+          </div>
+        </div>
+
+        <div class="hero-card reveal tilt">
+          <div class="orb one"></div>
+          <div class="orb two"></div>
+          <div class="terminal">
+            <span class="line"><span class="accent">moriarty</span> init project-pse</span>
+            <span class="line">→ analyse besoin client</span>
+            <span class="line">→ design + développement</span>
+            <span class="line">→ mise en ligne + maintenance</span>
+            <span class="line ok">✓ projet structuré, concret, évolutif</span>
+            <span class="line">presentation.ready()<span class="cursor"></span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-title="Constat">
+      <div class="section-inner">
+        <div class="kicker reveal">01 · Le constat</div>
+        <h2 class="reveal">Un besoin réel chez les petites structures.</h2>
+        <p class="lead reveal">
+          Beaucoup d’indépendants, artisans, commerçants et petites entreprises ont besoin d’une présence en ligne professionnelle,
+          mais se retrouvent face à des solutions trop chères, trop complexes ou déjà dépassées.
+        </p>
+
+        <div class="grid-3">
+          <article class="card reveal tilt">
+            <div class="num">01</div>
+            <h3>Trop cher</h3>
+            <p>Les agences classiques sont souvent hors budget pour une petite activité locale ou une entreprise qui démarre.</p>
+          </article>
+          <article class="card reveal tilt">
+            <div class="num">02</div>
+            <h3>Trop complexe</h3>
+            <p>Les solutions “faites soi-même” demandent du temps, de la méthode, de la technique et une vraie vision du parcours client.</p>
+          </article>
+          <article class="card reveal tilt">
+            <div class="num">03</div>
+            <h3>Pas assez adapté</h3>
+            <p>Un site doit répondre à un besoin concret : contact, réservation, paiement, confiance, visibilité et autonomie.</p>
+          </article>
+        </div>
+
+        <div class="big-quote reveal">
+          Moriarty se positionne entre le site amateur et l’agence traditionnelle.
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-title="Solution">
+      <div class="section-inner">
+        <div class="kicker reveal">02 · La solution</div>
+        <h2 class="reveal">Des sites professionnels, simples à gérer, accessibles financièrement.</h2>
+
+        <div class="solution-panel">
+          <div class="reveal">
+            <p class="lead">
+              L’objectif n’est pas seulement de livrer un site.
+              L’objectif est de livrer un outil utile, compréhensible, durable et adapté aux moyens d’une petite structure.
+            </p>
+            <p class="text" style="margin-top: 24px;">
+              Chaque projet est construit autour d’un besoin concret : présenter, rassurer, convertir, automatiser ou simplifier le quotidien du client.
+            </p>
+          </div>
+
+          <div class="interface-mock reveal tilt">
+            <div class="module-ring"></div>
+            <div class="mock-top">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+            <div class="mock-content">
+              <div class="mock-hero"></div>
+              <div class="mock-row">
+                <div class="mock-box"></div>
+                <div class="mock-box"></div>
+              </div>
+              <div class="mock-row">
+                <div class="mock-box"></div>
+                <div class="mock-box"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-title="Offres">
+      <div class="section-inner">
+        <div class="kicker reveal">03 · Les offres</div>
+        <h2 class="reveal">Une offre progressive selon les besoins.</h2>
+        <p class="lead reveal">
+          Du simple portfolio à l’application web plus complète, Moriarty permet d’accompagner le client à son niveau réel de besoin.
+        </p>
+
+        <div class="grid-4">
+          <article class="card reveal tilt">
+            <div class="num">Starter</div>
+            <h3>Portfolio</h3>
+            <p>Présence propre et rassurante pour indépendant, artiste, freelance ou petite activité.</p>
+          </article>
+          <article class="card reveal tilt">
+            <div class="num">Essentiel</div>
+            <h3>Site vitrine</h3>
+            <p>Présentation de l’entreprise, prestations, réalisations, formulaire, avis, appel à l’action.</p>
+          </article>
+          <article class="card reveal tilt">
+            <div class="num">Métier</div>
+            <h3>Site spécialisé</h3>
+            <p>Restaurant, salon, artisan, esthéticienne, coiffeur : réservation, galerie, cartes cadeaux, paiement.</p>
+          </article>
+          <article class="card reveal tilt">
+            <div class="num">Évolutif</div>
+            <h3>Application web</h3>
+            <p>Espace admin, gestion de contenus, planning, commandes, automatisations et fonctionnalités sur mesure.</p>
+          </article>
+        </div>
+
+        <div class="big-quote reveal">
+          Chaque projet peut être complété par un abonnement de maintenance, d’hébergement, d’assistance et d’évolution.
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-title="Méthode">
+      <div class="section-inner">
+        <div class="kicker reveal">04 · La méthode</div>
+        <h2 class="reveal">Une méthode simple pour le client, solide en arrière-plan.</h2>
+
+        <div class="timeline reveal">
+          <div class="step" data-step="01">
+            <h3>Écouter</h3>
+            <p>Comprendre le besoin réel, la cible, les contraintes et l’objectif du site.</p>
+          </div>
+          <div class="step" data-step="02">
+            <h3>Structurer</h3>
+            <p>Définir les pages, les contenus, les fonctionnalités et le parcours utilisateur.</p>
+          </div>
+          <div class="step" data-step="03">
+            <h3>Maquetter</h3>
+            <p>Proposer une direction visuelle claire avant le développement complet.</p>
+          </div>
+          <div class="step" data-step="04">
+            <h3>Développer</h3>
+            <p>Construire un site responsive, rapide, maintenable et propre techniquement.</p>
+          </div>
+          <div class="step" data-step="05">
+            <h3>Mettre en ligne</h3>
+            <p>Domaine, hébergement, sécurité, formulaires, paiements et configuration.</p>
+          </div>
+          <div class="step" data-step="06">
+            <h3>Accompagner</h3>
+            <p>Former le client, maintenir, corriger et faire évoluer progressivement.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-title="Outils">
+      <div class="section-inner split">
+        <div>
+          <div class="kicker reveal">05 · Production</div>
+          <h2 class="reveal">Une chaîne de production moderne.</h2>
+          <p class="lead reveal">
+            Les outils sont choisis pour produire vite, proprement et avec des coûts adaptés aux petites structures.
+          </p>
+        </div>
+
+        <div class="stat-stack reveal">
+          <div class="stat">
+            <strong>rapide</strong>
+            <span>Développement accéléré par des outils modernes et des composants réutilisables.</span>
+          </div>
+          <div class="stat">
+            <strong>fiable</strong>
+            <span>Versioning, déploiement propre, hébergement robuste, paiements sécurisés.</span>
+          </div>
+          <div class="stat">
+            <strong>évolutif</strong>
+            <span>Possibilité de partir simple puis d’ajouter des modules métier au fil du temps.</span>
+          </div>
+        </div>
+
+        <div class="tool-cloud reveal" style="grid-column: 1 / -1;">
+          <span class="tool" style="--delay:0s;">Cursor</span>
+          <span class="tool" style="--delay:.2s;">GitHub</span>
+          <span class="tool" style="--delay:.4s;">Vercel</span>
+          <span class="tool" style="--delay:.6s;">Firebase</span>
+          <span class="tool" style="--delay:.8s;">Stripe</span>
+          <span class="tool" style="--delay:1s;">Google Workspace</span>
+          <span class="tool" style="--delay:1.2s;">Cloudinary</span>
+          <span class="tool" style="--delay:1.4s;">Automatisations</span>
+          <span class="tool" style="--delay:1.6s;">HTML</span>
+          <span class="tool" style="--delay:1.8s;">CSS</span>
+          <span class="tool" style="--delay:2s;">JavaScript</span>
+          <span class="tool" style="--delay:2.2s;">SEO</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-title="Preuves">
+      <div class="section-inner">
+        <div class="kicker reveal">06 · Preuves concrètes</div>
+        <h2 class="reveal">Des premiers cas concrets déjà travaillés.</h2>
+        <p class="lead reveal">
+          Le projet n’est pas au stade de l’idée : des cas réels ont déjà permis de valider la méthode, les outils et les besoins clients.
+        </p>
+
+        <div class="grid-2">
+          <article class="card project-card reveal tilt">
+            <div>
+              <div class="project-top">
+                <span class="project-badge">Location saisonnière</span>
+                <span class="project-badge">Projet réel</span>
+              </div>
+              <h3>Calypso Bay</h3>
+              <p>
+                Site de location saisonnière avec présentation premium, calendrier, demandes de réservation,
+                paiements d’acompte et de solde, emails automatisés et guide multilingue.
+              </p>
+            </div>
+            <div class="chips">
+              <span class="chip">Stripe</span>
+              <span class="chip">Calendrier</span>
+              <span class="chip">Emails</span>
+              <span class="chip">Multilingue</span>
+            </div>
+          </article>
+
+          <article class="card project-card reveal tilt">
+            <div>
+              <div class="project-top">
+                <span class="project-badge">Beauté / services</span>
+                <span class="project-badge">Écosystème</span>
+              </div>
+              <h3>Maoya Makeup</h3>
+              <p>
+                Refonte d’un écosystème multi-sites : salon, boutique, événementiel et formation,
+                avec identité visuelle commune, paiement, contenus, réservations et espace admin.
+              </p>
+            </div>
+            <div class="chips">
+              <span class="chip">Multi-sites</span>
+              <span class="chip">E-commerce</span>
+              <span class="chip">Réservation</span>
+              <span class="chip">Admin</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-title="Économie">
+      <div class="section-inner">
+        <div class="kicker reveal">07 · Modèle économique</div>
+        <h2 class="reveal">Un modèle basé sur la création et le revenu récurrent.</h2>
+
+        <div class="grid-2">
+          <article class="card reveal tilt">
+            <div class="num">Vente initiale</div>
+            <h3>Création / refonte</h3>
+            <p>Création de site, refonte, mise en place technique, domaine, hébergement, paiement, réservation ou modules spécifiques.</p>
+          </article>
+          <article class="card reveal tilt">
+            <div class="num">Récurrent</div>
+            <h3>Maintenance / abonnement</h3>
+            <p>Hébergement, suivi technique, mises à jour, assistance, petites évolutions, sécurité et accompagnement du client.</p>
+          </article>
+        </div>
+
+        <div class="business-flow reveal">
+          <div class="flow-item">
+            <strong>Projet initial</strong>
+            <span>Un besoin concret donne lieu à une prestation claire.</span>
+          </div>
+          <div class="flow-item">
+            <strong>Mise en ligne</strong>
+            <span>Le client obtient un outil opérationnel et professionnel.</span>
+          </div>
+          <div class="flow-item">
+            <strong>Abonnement</strong>
+            <span>Maintenance, hébergement et suivi mensuel.</span>
+          </div>
+          <div class="flow-item">
+            <strong>Évolutions</strong>
+            <span>Ajout progressif de modules selon les besoins.</span>
+          </div>
+          <div class="flow-item">
+            <strong>Recommandation</strong>
+            <span>Chaque projet livré devient une référence commerciale.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-title="PSE">
+      <div class="section-inner">
+        <div class="kicker reveal">08 · Utilité de l’aide PSE</div>
+        <h2 class="reveal">Sécuriser le lancement de l’activité.</h2>
+        <p class="lead reveal">
+          L’aide à la création permettrait de transformer un projet déjà préparé en activité structurée,
+          en réduisant le risque au moment critique du démarrage.
+        </p>
+
+        <div class="grid-4">
+          <article class="card reveal tilt">
+            <div class="num">01</div>
+            <h3>Matériel</h3>
+            <p>Poste de travail fiable, puissant et durable pour développement, graphisme, tests et gestion multi-projets.</p>
+          </article>
+          <article class="card reveal tilt">
+            <div class="num">02</div>
+            <h3>Logiciels</h3>
+            <p>Outils professionnels, hébergement, domaines, stockage, automatisation, sécurité et production.</p>
+          </article>
+          <article class="card reveal tilt">
+            <div class="num">03</div>
+            <h3>Communication</h3>
+            <p>Site Moriarty, identité, supports commerciaux, démonstrateurs et prospection ciblée.</p>
+          </article>
+          <article class="card reveal tilt">
+            <div class="num">04</div>
+            <h3>Trésorerie</h3>
+            <p>Temps nécessaire pour structurer l’offre, démarcher, signer les premiers clients et stabiliser les revenus.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-title="Accompagnement">
+      <div class="section-inner split">
+        <div>
+          <div class="kicker reveal">09 · Accompagnement</div>
+          <h2 class="reveal">Un projet accompagné et progressif.</h2>
+          <p class="lead reveal">
+            Le projet est construit dans le cadre d’un accompagnement LHH, avec une logique progressive :
+            structuration de l’offre, positionnement commercial, prévisionnel, démarches et suivi.
+          </p>
+        </div>
+
+        <div class="grid-2 reveal">
+          <article class="card tilt">
+            <div class="num">LHH</div>
+            <h3>Cadre d’accompagnement</h3>
+            <p>Analyse du projet, points de vigilance, étapes de lancement et sécurisation de la transition.</p>
+          </article>
+          <article class="card tilt">
+            <div class="num">Offre</div>
+            <h3>Structuration</h3>
+            <p>Clarification des services, des tarifs, des cibles et des priorités commerciales.</p>
+          </article>
+          <article class="card tilt">
+            <div class="num">Viabilité</div>
+            <h3>Prévisionnel</h3>
+            <p>Construction d’une trajectoire réaliste, progressive et cohérente avec les moyens disponibles.</p>
+          </article>
+          <article class="card tilt">
+            <div class="num">Lancement</div>
+            <h3>Progression</h3>
+            <p>Déploiement par étapes pour limiter le risque et consolider les revenus récurrents.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-title="Vision">
+      <div class="section-inner">
+        <div class="kicker reveal">10 · Vision</div>
+        <h2 class="reveal">Une montée en charge réaliste.</h2>
+        <p class="lead reveal">
+          L’objectif est de construire une activité durable, pas de rechercher une rentabilité artificielle immédiate.
+        </p>
+
+        <div class="vision">
+          <article class="vision-card reveal tilt">
+            <div>
+              <div class="period">0 à 6 mois</div>
+              <h3>Lancer</h3>
+              <p>Finaliser l’offre, créer le site Moriarty, préparer les supports, démarrer la prospection et signer les premiers clients.</p>
+            </div>
+          </article>
+          <article class="vision-card reveal tilt">
+            <div>
+              <div class="period">6 à 12 mois</div>
+              <h3>Structurer</h3>
+              <p>Développer le portefeuille, améliorer les offres, obtenir les premiers abonnements récurrents.</p>
+            </div>
+          </article>
+          <article class="vision-card reveal tilt">
+            <div>
+              <div class="period">12 à 24 mois</div>
+              <h3>Stabiliser</h3>
+              <p>Multiplier les références, optimiser la méthode et réutiliser des modèles efficaces par secteur.</p>
+            </div>
+          </article>
+          <article class="vision-card reveal tilt">
+            <div>
+              <div class="period">24 à 36 mois</div>
+              <h3>Développer</h3>
+              <p>Renforcer les revenus récurrents, spécialiser l’offre et élargir les prestations selon la demande.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-title="Conclusion">
+      <div class="section-inner">
+        <div class="final-panel reveal tilt">
+          <div class="kicker">Conclusion</div>
+          <h2>Un projet concret, cohérent et déjà engagé.</h2>
+          <p class="lead">
+            Moriarty est un projet de création d’activité fondé sur des compétences déjà mobilisées,
+            une méthode claire, des outils modernes, des premiers cas concrets et un besoin réel du marché.
+          </p>
+          <p class="lead">
+            L’aide PSE permettrait de sécuriser cette transition professionnelle et de lancer l’activité dans de bonnes conditions.
+          </p>
+          <div class="signature">
+            <div>
+              <strong>Kevin Blart</strong><br>
+              Projet de création d’entreprise — Moriarty
+            </div>
+            <a class="cta" href="#top" onclick="document.querySelectorAll('.section')[0].scrollIntoView({behavior:'smooth'}); return false;">Revenir au début</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const sections = Array.from(document.querySelectorAll(".section"));
+    const nav = document.getElementById("sideNav");
+    const progress = document.getElementById("progress");
+    const hint = document.getElementById("hint");
+    const presentationBtn = document.getElementById("presentationBtn");
+
+    sections.forEach((section, index) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.setAttribute("aria-label", section.dataset.title || `Section ${index + 1}`);
+      btn.addEventListener("click", () => {
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      nav.appendChild(btn);
+    });
+
+    const navButtons = Array.from(nav.querySelectorAll("button"));
+
+    function setActiveSection(index) {
+      sections.forEach((section, i) => section.classList.toggle("active", i === index));
+      navButtons.forEach((button, i) => button.classList.toggle("active", i === index));
+      if (index > 0) hint.classList.add("hidden");
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter(entry => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+      if (visible) {
+        const index = sections.indexOf(visible.target);
+        setActiveSection(index);
+      }
+    }, {
+      threshold: [0.45, 0.6, 0.75]
+    });
+
+    sections.forEach(section => observer.observe(section));
+    setActiveSection(0);
+
+    function updateProgress() {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = max > 0 ? window.scrollY / max : 0;
+      progress.style.width = `${ratio * 100}%`;
+    }
+
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    updateProgress();
+
+    // Navigation clavier façon présentation.
+    window.addEventListener("keydown", (event) => {
+      const current = navButtons.findIndex(button => button.classList.contains("active"));
+      if (["ArrowDown", "PageDown", " "].includes(event.key)) {
+        event.preventDefault();
+        const next = Math.min(current + 1, sections.length - 1);
+        sections[next].scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      if (["ArrowUp", "PageUp"].includes(event.key)) {
+        event.preventDefault();
+        const prev = Math.max(current - 1, 0);
+        sections[prev].scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      if (event.key === "Home") {
+        event.preventDefault();
+        sections[0].scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      if (event.key === "End") {
+        event.preventDefault();
+        sections[sections.length - 1].scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+
+    presentationBtn.addEventListener("click", async () => {
+      document.body.classList.toggle("presentation-mode");
+
+      if (!document.fullscreenElement) {
+        try {
+          await document.documentElement.requestFullscreen();
+          presentationBtn.textContent = "Quitter présentation";
+        } catch (error) {
+          presentationBtn.textContent = document.body.classList.contains("presentation-mode")
+            ? "Quitter présentation"
+            : "Mode présentation";
+        }
+      } else {
+        await document.exitFullscreen();
+        presentationBtn.textContent = "Mode présentation";
+      }
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement) {
+        document.body.classList.remove("presentation-mode");
+        presentationBtn.textContent = "Mode présentation";
+      }
+    });
+
+    // Effet lumière dans les cartes + tilt 3D.
+    const tiltElements = Array.from(document.querySelectorAll(".tilt"));
+
+    tiltElements.forEach((el) => {
+      el.addEventListener("mousemove", (event) => {
+        const rect = el.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const px = x / rect.width;
+        const py = y / rect.height;
+
+        el.style.setProperty("--mx", `${px * 100}%`);
+        el.style.setProperty("--my", `${py * 100}%`);
+
+        const rotateX = (py - 0.5) * -8;
+        const rotateY = (px - 0.5) * 8;
+        el.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+      });
+
+      el.addEventListener("mouseleave", () => {
+        el.style.transform = "";
+        el.style.removeProperty("--mx");
+        el.style.removeProperty("--my");
+      });
+    });
+
+    // Déplacement subtil des halos par section.
+    window.addEventListener("pointermove", (event) => {
+      const x = Math.round((event.clientX / window.innerWidth) * 100);
+      const y = Math.round((event.clientY / window.innerHeight) * 100);
+      document.documentElement.style.setProperty("--spot-x", `${x}%`);
+      document.documentElement.style.setProperty("--spot-y", `${y}%`);
+    }, { passive: true });
+
+    // Canvas particules : sobre, premium, interactif.
+    const canvas = document.getElementById("particleCanvas");
+    const ctx = canvas.getContext("2d");
+    const pointer = { x: -9999, y: -9999 };
+    let particles = [];
+    let width = 0;
+    let height = 0;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    function resizeCanvas() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const count = Math.min(115, Math.max(55, Math.floor(width * height / 17000)));
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.28,
+        vy: (Math.random() - 0.5) * 0.28,
+        r: Math.random() * 1.7 + 0.5,
+        hue: Math.random() > 0.45 ? 198 : 260
+      }));
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (const p of particles) {
+        const dx = p.x - pointer.x;
+        const dy = p.y - pointer.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const force = Math.max(0, 120 - dist) / 120;
+
+        if (force > 0) {
+          p.vx += (dx / (dist || 1)) * force * 0.035;
+          p.vy += (dy / (dist || 1)) * force * 0.035;
+        }
+
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.992;
+        p.vy *= 0.992;
+
+        if (p.x < -20) p.x = width + 20;
+        if (p.x > width + 20) p.x = -20;
+        if (p.y < -20) p.y = height + 20;
+        if (p.y > height + 20) p.y = -20;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue}, 90%, 76%, 0.55)`;
+        ctx.fill();
+      }
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const a = particles[i];
+          const b = particles[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 128) {
+            const alpha = (1 - dist / 128) * 0.16;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(142, 216, 255, ${alpha})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(drawParticles);
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("pointermove", (event) => {
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
+    }, { passive: true });
+
+    window.addEventListener("pointerleave", () => {
+      pointer.x = -9999;
+      pointer.y = -9999;
+    });
+
+    resizeCanvas();
+    drawParticles();
+  </script>
+</body>
+</html>

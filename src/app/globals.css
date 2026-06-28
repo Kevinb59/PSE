@@ -1,0 +1,375 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #060812;
+  --bg-soft: #0b1020;
+  --text: #f5f7ff;
+  --muted: rgba(245, 247, 255, 0.68);
+  --muted-2: rgba(245, 247, 255, 0.45);
+  --line: rgba(255, 255, 255, 0.12);
+  --card: rgba(255, 255, 255, 0.065);
+  --accent: #8ed8ff;
+  --accent-2: #a889ff;
+  --accent-3: #55f0c5;
+  --radius-xl: 32px;
+  --radius-lg: 24px;
+  --shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+  --spot-x: 50vw;
+  --spot-y: 50vh;
+
+  /* Fond animé — valeurs par défaut (surchargées par applyBackgroundSettings) */
+  --mesh-b1-o: 0.26;
+  --mesh-b1-size: 42vmax;
+  --mesh-b1-x: 16%;
+  --mesh-b1-y: 20%;
+  --mesh-b1-rgb: 69, 155, 255;
+  --mesh-b2-o: 0.16;
+  --mesh-b2-size: 38vmax;
+  --mesh-b2-x: 80%;
+  --mesh-b2-y: 18%;
+  --mesh-b2-rgb: 153, 102, 255;
+  --mesh-b3-o: 0.13;
+  --mesh-b3-size: 36vmax;
+  --mesh-b3-x: 72%;
+  --mesh-b3-y: 88%;
+  --mesh-b3-rgb: 65, 232, 187;
+  --mesh-bg-top: #050713;
+  --mesh-bg-mid: #0b1022;
+  --mesh-bg-bottom: #03040a;
+  --spot-opacity: 0.07;
+  --spot-radius: 200vmax;
+  --spot-mid-opacity: 0.035;
+  --grid-opacity: 0.25;
+  --grid-size: 48px;
+  --grid-line-opacity: 0.045;
+  --grid-vignette-inner: 55%;
+  --noise-opacity: 0.08;
+  --noise-frequency: 2.2;
+  --noise-tile-size: 96px;
+  --particles-layer-opacity: 0.9;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-3: var(--accent-3);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+body.presentation-mode {
+  cursor: none;
+}
+
+/* Fond dégradé animé — piloté par variables CSS */
+.bg-mesh {
+  position: fixed;
+  inset: 0;
+  z-index: -4;
+  background:
+    radial-gradient(circle var(--mesh-b1-size) at var(--mesh-b1-x) var(--mesh-b1-y), rgba(var(--mesh-b1-rgb), var(--mesh-b1-o)) 0%, rgba(var(--mesh-b1-rgb), calc(var(--mesh-b1-o) * 0.23)) 42%, transparent 68%),
+    radial-gradient(circle var(--mesh-b2-size) at var(--mesh-b2-x) var(--mesh-b2-y), rgba(var(--mesh-b2-rgb), var(--mesh-b2-o)) 0%, rgba(var(--mesh-b2-rgb), calc(var(--mesh-b2-o) * 0.25)) 45%, transparent 70%),
+    radial-gradient(circle var(--mesh-b3-size) at var(--mesh-b3-x) var(--mesh-b3-y), rgba(var(--mesh-b3-rgb), var(--mesh-b3-o)) 0%, rgba(var(--mesh-b3-rgb), calc(var(--mesh-b3-o) * 0.23)) 45%, transparent 70%),
+    linear-gradient(145deg, var(--mesh-bg-top) 0%, var(--mesh-bg-mid) 48%, var(--mesh-bg-bottom) 100%);
+}
+
+.bg-mesh::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle var(--spot-radius) at var(--spot-x) var(--spot-y),
+    rgba(142, 216, 255, var(--spot-opacity)) 0%,
+    rgba(142, 216, 255, var(--spot-mid-opacity)) 18%,
+    rgba(100, 140, 220, calc(var(--spot-mid-opacity) * 0.35)) 45%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  opacity: var(--grid-opacity);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, var(--grid-line-opacity)) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, var(--grid-line-opacity)) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  mask-image: radial-gradient(ellipse at center, black var(--grid-vignette-inner), transparent 82%);
+  pointer-events: none;
+}
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: var(--noise-opacity);
+  background-size: var(--noise-tile-size) var(--noise-tile-size);
+}
+
+.gradient-text {
+  background: linear-gradient(120deg, #fff 12%, var(--accent) 38%, var(--accent-2) 70%, #fff 92%);
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shine 7s ease-in-out infinite;
+}
+
+/* Script Engagement : réserve de place pour les descenders (M, y…) */
+.hero-brand-title {
+  display: inline-block;
+  overflow: visible;
+  line-height: 1.2;
+  padding-bottom: 0.22em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Intro overlay : centrage optique entre logo et sous-titre */
+.intro-overlay-title {
+  line-height: 1;
+  padding-top: 0.12em;
+  padding-bottom: 0.12em;
+}
+
+@keyframes shine {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+
+/* Arc-en-ciel animé — titre « IA », boucle infinie sans à-coup */
+.rainbow-ia {
+  display: inline-block;
+  background: linear-gradient(
+    90deg,
+    #ff6b6b 0%,
+    #ffd93d 14%,
+    #6bcb77 28%,
+    #4d96ff 42%,
+    #a855f7 56%,
+    #ff6b9d 70%,
+    #ffd93d 84%,
+    #ff6b6b 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rainbow-ia-loop 3.5s linear infinite;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+@keyframes rainbow-ia-loop {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 200% 50%;
+  }
+}
+
+/* Cadre arc-en-ciel — padding 2px (contour only, sans mask) */
+.rainbow-frame {
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(
+    90deg,
+    #ff6b6b 0%,
+    #ffd93d 14%,
+    #6bcb77 28%,
+    #4d96ff 42%,
+    #a855f7 56%,
+    #ff6b9d 70%,
+    #ffd93d 84%,
+    #ff6b6b 100%
+  );
+  background-size: 200% 100%;
+  animation: rainbow-ia-loop 3.5s linear infinite;
+  will-change: background-position;
+}
+
+.rainbow-frame__inner {
+  border-radius: 18px;
+  background-color: #070b14;
+}
+
+@keyframes float-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 60px);
+  }
+  50% {
+    transform: translate3d(24px, 34px, 80px);
+  }
+}
+
+@keyframes float-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 70px);
+  }
+  50% {
+    transform: translate3d(-30px, -24px, 95px);
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes wheel {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0);
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+}
+
+@keyframes rotate-ring {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes tool-sweep {
+  0%,
+  55%,
+  100% {
+    transform: translateX(-100%);
+  }
+  75% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes intro-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scaleX(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1.12);
+  }
+}
+
+.section-glow::before {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  z-index: -1;
+  opacity: 0.5;
+  background:
+    radial-gradient(circle 50vmax at 25% 35%, rgba(142, 216, 255, 0.09) 0%, rgba(142, 216, 255, 0.02) 50%, transparent 72%),
+    radial-gradient(circle 45vmax at 75% 65%, rgba(168, 137, 255, 0.07) 0%, rgba(168, 137, 255, 0.02) 52%, transparent 74%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.card-glow::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgba(142, 216, 255, 0.18),
+    transparent 34%
+  );
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.card-glow:hover::after {
+  opacity: 1;
+}
+
+.split-char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* Empêche la coupure des mots dans les titres animés */
+.split-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.title-no-break {
+  hyphens: none;
+  word-break: normal;
+  overflow-wrap: normal;
+  text-wrap: balance;
+}
+
+.font-engagement {
+  font-family: var(--font-engagement), cursive;
+  font-weight: 400;
+}
+
+@media print {
+  body {
+    background: white;
+    color: #111827;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
