@@ -95,6 +95,7 @@ export default function BullProofHotspot({ site }: BullProofHotspotProps) {
                   fill
                   className="object-cover object-top"
                   sizes="825px"
+                  quality={92}
                 />
               ) : (
                 <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[linear-gradient(135deg,rgba(142,216,255,0.12),rgba(168,137,255,0.08))] px-5 text-center">
